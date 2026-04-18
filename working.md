@@ -338,6 +338,8 @@
 | [IDE\_employment\_survey\_20260416.md](IDE_employment_survey_20260416.md)                                  | 英文文献综述      | 已完成（引用已修正）  |
 | [literature\_hangzhou\_employment\_transition\_2024.md](literature_hangzhou_employment_transition_2024.md) | 中文文献（杭州X机构） | 新增          |
 | [literature\_analysis\_hangzhou\_2024.md](literature_analysis_hangzhou_2024.md)                            | 中文文献分析      | 新增          |
+| [literature\_heinze\_workplace\_accommodations\_2025.md](literature_heinze_workplace_accommodations_2025.md) | 英文文献（Heinze系统综述） | 新增     |
+| [literature\_analysis\_heinze\_2025.md](literature_analysis_heinze_2025.md)                                  | Heinze文献分析    | 新增          |
 | [working.md](working.md)                                                                                   | 本工作记录文档     | 持续更新        |
 
 ***

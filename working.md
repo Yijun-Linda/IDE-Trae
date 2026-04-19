@@ -12,7 +12,9 @@
 2026-04-17 start: 13:01 finish: 15:45
 2026-04-18 start: 08:35 finish: 09:10
 2026-04-18 start: 22:46 finish: 23:58
--------------------------------------
+2026-04-19 start: 10:42 finish: 12:35（塘桥街道实地走访）
+2026-04-19 start: 23:22 finish: 23:57
+-----------------------------------------------
 
 ## 今日完成工作 （2026-04-16）
 
@@ -333,19 +335,21 @@
 
 ## 关键文件索引更新
 
-| 文件名                                                                                                          | 内容               | 状态           |
-| ------------------------------------------------------------------------------------------------------------ | ---------------- | ------------ |
-| [trae-solo-challenge-hello-ai.md](trae-solo-challenge-hello-ai.md)                                           | 比赛规则与提交指南        | 已完成          |
-| [research\_questions\_neurodiversity\_employment.md](research_questions_neurodiversity_employment.md)        | 研究问题与核心假设        | 已更新（假设一+修正）  |
-| [IDE\_employment\_survey\_20260416.md](IDE_employment_survey_20260416.md)                                    | 英文文献综述           | 已完成（引用已修正）   |
-| [literature\_hangzhou\_employment\_transition\_2024.md](literature_hangzhou_employment_transition_2024.md)   | 中文文献（杭州X机构）      | 新增           |
-| [literature\_analysis\_hangzhou\_2024.md](literature_analysis_hangzhou_2024.md)                              | 中文文献分析           | 新增           |
-| [literature\_heinze\_workplace\_accommodations\_2025.md](literature_heinze_workplace_accommodations_2025.md) | 英文文献（Heinze系统综述） | 新增（待重新评估适用性） |
-| [literature\_analysis\_heinze\_2025.md](literature_analysis_heinze_2025.md)                                  | Heinze文献分析       | 新增（发现场景错位问题） |
-| [review\_critique\_gemini\_20250418.md](review_critique_gemini_20250418.md)                                  | 方案批判报告（Gemini评审） | 新增           |
-| [survey\_poka\_yoke\_realtime\_feedback\_20250418.md](survey_poka_yoke_realtime_feedback_20250418.md)        | 防呆设计与实时反馈研究综述    | 新增           |
-| [mvp\_plan\_gemini\_20250418.md](mvp_plan_gemini_20250418.md)                                                | MVP规划（Gemini）    | 新增           |
-| [working.md](working.md)                                                                                     | 本工作记录文档          | 持续更新         |
+| 文件名                                                                                                          | 内容               | 状态             |
+| ------------------------------------------------------------------------------------------------------------ | ---------------- | -------------- |
+| [trae-solo-challenge-hello-ai.md](trae-solo-challenge-hello-ai.md)                                           | 比赛规则与提交指南        | 已完成            |
+| [research\_questions\_neurodiversity\_employment.md](research_questions_neurodiversity_employment.md)        | 研究问题与核心假设        | 已更新（假设一+修正）    |
+| [IDE\_employment\_survey\_20260416.md](IDE_employment_survey_20260416.md)                                    | 英文文献综述           | 已完成（引用已修正）     |
+| [literature\_hangzhou\_employment\_transition\_2024.md](literature_hangzhou_employment_transition_2024.md)   | 中文文献（杭州X机构）      | 新增             |
+| [literature\_analysis\_hangzhou\_2024.md](literature_analysis_hangzhou_2024.md)                              | 中文文献分析           | 新增             |
+| [literature\_heinze\_workplace\_accommodations\_2025.md](literature_heinze_workplace_accommodations_2025.md) | 英文文献（Heinze系统综述） | 新增（待重新评估适用性）   |
+| [literature\_analysis\_heinze\_2025.md](literature_analysis_heinze_2025.md)                                  | Heinze文献分析       | 新增（发现场景错位问题）   |
+| [review\_critique\_gemini\_20250418.md](review_critique_gemini_20250418.md)                                  | 方案批判报告（Gemini评审） | 新增             |
+| [survey\_poka\_yoke\_realtime\_feedback\_20250418.md](survey_poka_yoke_realtime_feedback_20250418.md)        | 防呆设计与实时反馈研究综述    | 新增             |
+| [mvp\_plan\_gemini\_20250418.md](mvp_plan_gemini_20250418.md)                                                | MVP规划（Gemini）    | 新增             |
+| [field\_visit\_tang\_space\_20250419.md](field_visit_tang_space_20250419.md)                                 | 塘·空间实地观察记录       | 新增（2026-04-19） |
+| [interview\_guide\_community\_service.md](interview_guide_community_service.md)                              | 社区服务办访谈指南        | 新增（2026-04-19） |
+| [working.md](working.md)                                                                                     | 本工作记录文档          | 持续更新           |
 
 ***
 
@@ -456,7 +460,7 @@
 
 ### 8. 文献综述深度更新：Poka-yoke与实时行为反馈研究
 
-**完成文件**: [survey_poka_yoke_realtime_feedback_20250418.md](survey_poka_yoke_realtime_feedback_20250418.md)
+**完成文件**: [survey\_poka\_yoke\_realtime\_feedback\_20250418.md](survey_poka_yoke_realtime_feedback_20250418.md)
 
 **核心发现**:
 
@@ -467,6 +471,7 @@
    - 2025年数字辅助技术元分析: g=0.39
 
 **文献排除**: 根据Gemini批判，排除Cureus系统综述（Heinze, 2025）
+
 - 排除原因: 人群错位（高功能自闭症vs心智障碍）、场景错位（白领居家办公vs实体店餐饮）
 
 ### 9. 技术选型方案确定
@@ -475,42 +480,107 @@
 
 **最终选型**:
 
-| 组件 | 选型 | 原因 |
-|------|------|------|
-| 视觉识别 | 阿里云视觉智能开放平台 | 国内合规、免费额度充足、延迟低、文档全中文 |
-| 语音交互 | 阿里云语音合成/识别 | 同一平台，集成成本低 |
-| LLM任务拆解 | 通义千问/豆包 | 中文场景优化，API调用简单 |
-| 硬件输入 | 普通摄像头/手机视频 | 无需Rokid眼镜，降低硬件门槛 |
+| 组件      | 选型          | 原因                    |
+| ------- | ----------- | --------------------- |
+| 视觉识别    | 阿里云视觉智能开放平台 | 国内合规、免费额度充足、延迟低、文档全中文 |
+| 语音交互    | 阿里云语音合成/识别  | 同一平台，集成成本低            |
+| LLM任务拆解 | 通义千问/豆包     | 中文场景优化，API调用简单        |
+| 硬件输入    | 普通摄像头/手机视频  | 无需Rokid眼镜，降低硬件门槛      |
 
 **阿里云视觉智能核心能力匹配**:
+
 - 人脸表情识别（7种基础情绪）→ 监测情绪状态、焦虑/困惑信号
 - 人体行为分析（站立/坐/行走/手部动作）→ 识别操作步骤正确性
 - 注意力/视线检测 → 判断专注度，自动触发提示
 
 ### 10. MVP规划完成
 
-**完成文件**: [mvp_plan_gemini_20250418.md](mvp_plan_gemini_20250418.md)
+**完成文件**: [mvp\_plan\_gemini\_20250418.md](mvp_plan_gemini_20250418.md)
 
 **MVP三阶段规划**:
 
 **第零步**: 感官与硬件可用性测试（含Plan B：摄像头+iPad降级方案）
 
 **第一阶段**（3-5天）: AI任务一键拆解Agent
+
 - 辅导员语音输入 → 通义千问LLM拆解 → 步骤卡片推送至青年设备
 - 交付标准: 3秒内完成从语音到步骤卡片展示
 
 **第二阶段**（核心壁垒）: AI视觉动作容错系统
+
 - 触发式截帧（超时30秒或主动求助时）→ 阿里云视觉智能API分析 → 语音/视觉反馈
 - 交付标准: 针对"做一杯美式咖啡"固定场景，5秒内完成错误识别与纠正
 
 **第三阶段**: 比赛路演故事线设计
+
 - 痛点反转（辅导员分身乏术）→ 方案亮相（AI数字化身）→ Demo演示 → 成本价值
 
 **72小时行动清单**:
+
 1. 硬件借测（确认摄像头/iPad可用性）
 2. 工作流标定（记录10个步骤+2个易错点）
 3. 跑通阿里云视觉智能API（表情识别、行为分析、语音合成测试）
 
----
+***
 
-*最后更新：2026-04-18*
+## 今日完成工作（2026-04-19）
+
+### 11. 塘桥街道实地走访
+
+**走访路线**：塘桥街道办事处 → 社区文化活动中心 → 塘·空间慈善超市
+
+#### 11.1 塘桥街道办事处
+
+**联系人**：社区服务办 \
+**联系方式**：已获取电话（待补充具体号码）
+
+**交流内容**：
+
+- 介绍了字节跳动 TRAE SOLO 公益比赛背景
+- 说明项目目标：用 AI 技术帮助心智障碍青年就业
+- 约定后续可安排正式采访交流时间
+
+#### 11.2 塘·空间慈善超市（实地观察）
+
+**关键发现**：
+
+| 发现         | 详情                            |
+| ---------- | ----------------------------- |
+| **员工构成**   | 店内主要是智力正常的志愿者维持运营             |
+| **心智障碍员工** | 一个月只能工作约90小时，不是不想来，而是能力边界受限   |
+| **听力障碍员工** | 能完成收银、挂标签、扫码、定价，会使用智能手机       |
+| **唐氏/自闭症** | 志愿者表示"如果你能看到一个正常上班的，那是1%的幸运儿" |
+
+**志愿者访谈要点**：
+
+1. **工作复杂度被低估**：志愿者承担大量预处理工作（筛选捐赠品、分类、定价）
+2. **认知负担转移**：心智障碍员工面对的是已被简化过的工作流
+3. **就业现实**："像这种有残疾的，就业真的，挺难的"
+
+**对产品设计的启示**：
+
+- 重新确认 AI 定位：不是"替代志愿者"，而是"将隐性经验转化为系统性支持"
+- 核心问题：哪些复杂性本就不该让心智障碍者承担？
+- 设计原则：从"赋能做更多"转向"设计需要更少判断的环境"
+
+**详细记录**：见 [field\_visit\_tang\_space\_20250419.md](field_visit_tang_space_20250419.md)
+
+***
+
+## 走访后续行动
+
+### 已建立的联系
+
+- [x] 塘桥街道社区服务办 张老师（电话已获取）
+- [x] "塘·空间"实地观察完成
+- [ ] 约定正式采访交流时间（待跟进）
+
+### 下一步
+
+1. **联系老师**，确认正式采访时间
+2. **准备采访提纲**：基于今天的观察，聚焦"隐性认知负担"识别
+3. **技术预研启动**：阿里云视觉智能 API 测试
+
+***
+
+*最后更新：2026-04-19*

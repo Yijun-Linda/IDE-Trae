@@ -122,12 +122,20 @@ vibe-muse/IDE-Trae/
 - [x] 方案设计（云打印机+按钮）
 - [x] 产品定义（mvp.md）
 - [x] 迭代规划（roadmap.md）
+- [x] 视觉呈现设计（visual_design.md）
+- [x] 项目目录结构初始化
+- [x] v0.1 Stories创建（story-0.1.1 ~ story-0.1.4）
+- [x] Python项目配置（requirements.txt, .env.example, .gitignore）
+- [x] story-0.1.1：云打印机API对接（代码+测试通过）
+- [x] story-0.1.2：AI订单拆解Prompt工程（代码完成）
+- [x] story-0.1.3：小票模板设计与打印测试（代码完成）
+- [x] story-0.1.4：时间延迟自动出单实现（代码完成）
 
 ### 4.3 待开始工作
 
-- [ ] story-0.1.1：云打印机API对接
-- [ ] story-0.1.2：AI订单拆解Prompt工程
-- [ ] story-0.1.3：小票模板设计与打印测试
+- [ ] 集成测试（端到端流程验证）
+- [ ] 实地测试（咖啡店现场测试）
+- [ ] v0.2开发（队列控制+异常回退优化）
 
 ### 4.4 关键里程碑
 

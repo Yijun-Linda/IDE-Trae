@@ -3,7 +3,7 @@
 ## 文献元数据
 
 - **标题**: Workplace Accommodations and Employment Outcomes Among Employees With Autism: A Systematic Review
-- Cécile Heinze 1. Behavioral Health, AutiSoul, Miami, USA&#x20;
+- Cécile Heinze 1. Behavioral Health, AutiSoul, Miami, USA
 - Corresponding author: Cécile Heinze, mcecileh\@gmail.com
 - **DOI**: 10.7759/cureus.99353
 - **期刊**: Cureus

@@ -60,3 +60,6 @@ Thumbs.db
 data/
 *.db
 *.sqlite
+
+# 临时文件目录
+temp/

@@ -33,15 +33,18 @@ class OrderTranslator:
         self.base_url = base_url or "https://dashscope.aliyuncs.com/compatible-mode/v1"
         
         # 延迟导入openai，避免未安装时报错
-        try:
-            from openai import OpenAI
-            self.client = OpenAI(
-                api_key=self.api_key,
-                base_url=self.base_url
-            )
-        except ImportError:
-            logger.warning("openai package not installed, using mock mode")
-            self.client = None
+        self.client = None
+        if self.api_key and self.api_key != 'mock':
+            try:
+                from openai import OpenAI
+                self.client = OpenAI(
+                    api_key=self.api_key,
+                    base_url=self.base_url
+                )
+            except ImportError:
+                logger.warning("openai package not installed, using mock mode")
+        else:
+            logger.info("No API key provided, using mock mode")
         
         # 加载prompts
         from .prompts import SYSTEM_PROMPT, USER_PROMPT_TEMPLATE, build_few_shot_prompt

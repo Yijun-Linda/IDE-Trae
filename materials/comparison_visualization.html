@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小票对比</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 40px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a3728;
+            margin-bottom: 40px;
+            font-size: 28px;
+        }
+        
+        .comparison {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .ticket-section {
+            flex: 1;
+            max-width: 900px;
+        }
+
+        .ticket-section.left-section {
+            max-width: 250px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .ticket {
+            background: white;
+            padding: 30px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+        }
+        
+        .ticket.before {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .ticket.after {
+            border-left: 4px solid #27ae60;
+        }
+        
+        .ticket-header {
+            text-align: center;
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .ticket-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .ticket-time {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .ticket-content {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .item {
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px dotted #eee;
+        }
+        
+        .item-name {
+            font-weight: bold;
+        }
+        
+        .item-specs {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .step-number {
+            font-weight: bold;
+            margin-right: 8px;
+            color: #666;
+        }
+        
+        .step-text {
+            flex: 1;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        .problem-badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+        
+        .solution-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-left: 10px;
+        }
+        
+        .arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #4a3728;
+            padding: 20px;
+        }
+        
+        .benefits {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .benefit-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .benefit-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .benefit-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #4a3728;
+            margin-bottom: 8px;
+        }
+        
+        .benefit-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 新增：小票列表样式横向并排 */
+        .ticket-list {
+            display: flex;
+            flex-direction: row;
+            gap: 12px;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+        }
+
+        .single-ticket {
+            background: white;
+            padding: 15px 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            font-family: "Courier New", monospace;
+            border-left: 4px solid #27ae60;
+            flex: 0 0 auto;
+            width: 220px;
+            min-width: 220px;
+        }
+
+        .single-ticket .ticket-header {
+            border-bottom: 2px dashed #ccc;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+        }
+
+        .single-ticket .ticket-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .single-ticket .ticket-subtitle {
+            font-size: 18px;
+            color: #4a3728;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .single-ticket .step {
+            margin: 10px 0;
+            padding: 8px 10px;
+        }
+
+        .single-ticket .step-number {
+            font-size: 15px;
+        }
+
+        .single-ticket .step-text {
+            font-size: 15px;
+        }
+
+        .single-ticket .checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid #333;
+            margin-right: 10px;
+        }
+
+        .next-cup-hint {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 2px dashed #ccc;
+            text-align: center;
+            color: #999;
+            font-size: 13px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .ticket {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>让复杂的咖啡订单变简单</h1>
+        
+        <div class="comparison">
+            <div class="ticket-section left-section">
+                <div class="section-title">
+                    传统小票
+                    <span class="problem-badge">认知负担重</span>
+                </div>
+                <div class="ticket before">
+                    <div class="ticket-header">
+                        <div class="ticket-title">美团外卖 #128</div>
+                        <div class="ticket-time">2026-05-09 14:32:18</div>
+                    </div>
+                    <div class="ticket-content">
+                        <div class="item">
+                            <div class="item-name">1x 拿铁（大杯，燕麦奶，半糖）</div>
+                            <div class="item-specs">备注：打包，尽快送达</div>
+                        </div>
+                        <div class="item">
+                            <div class="item-name">1x 冰美式（少冰）</div>
+                        </div>
+                        <div class="item">
+                            <div class="item-name">1x 卡布奇诺（大杯）</div>
+                        </div>
+                        <div class="item">
+                            <div class="item-name">1x 摩卡（加浓缩）</div>
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ccc;">
+                            <div>顾客：张先生 138****8888</div>
+                            <div>地址：XX小区3号楼501</div>
+                            <div>预计送达：15:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="arrow">→</div>
+            
+            <div class="ticket-section">
+                <div class="section-title">
+                    AI翻译后
+                    <span class="solution-badge">步骤清晰</span>
+                </div>
+                
+                <div class="ticket-list">
+                    <!-- 第1/4杯：拿铁 -->
+                    <div class="single-ticket">
+                        <div class="ticket-header">
+                            <div class="ticket-title">订单#128 第1/4杯</div>
+                            <div class="ticket-subtitle">冰拿铁（大杯，燕麦奶，半糖）</div>
+                        </div>
+                        <div class="ticket-content">
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">1.</span>
+                                <span class="step-text">拿冰杯大杯</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">2.</span>
+                                <span class="step-text">加燕麦奶</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">3.</span>
+                                <span class="step-text">加半糖糖浆</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">4.</span>
+                                <span class="step-text">萃取倒入</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">5.</span>
+                                <span class="step-text">盖上出杯</span>
+                            </div>
+                            <div class="next-cup-hint">
+                                5分钟后出下一杯
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第2/4杯：冰美式 -->
+                    <div class="single-ticket">
+                        <div class="ticket-header">
+                            <div class="ticket-title">订单#128 第2/4杯</div>
+                            <div class="ticket-subtitle">冰美式（少冰）</div>
+                        </div>
+                        <div class="ticket-content">
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">1.</span>
+                                <span class="step-text">拿冰杯中杯</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">2.</span>
+                                <span class="step-text">加少量冰块</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">3.</span>
+                                <span class="step-text">加直饮水</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">4.</span>
+                                <span class="step-text">萃取倒入</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">5.</span>
+                                <span class="step-text">盖上出杯</span>
+                            </div>
+                            <div class="next-cup-hint">
+                                5分钟后出下一杯
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第3/4杯：卡布奇诺 -->
+                    <div class="single-ticket">
+                        <div class="ticket-header">
+                            <div class="ticket-title">订单#128 第3/4杯</div>
+                            <div class="ticket-subtitle">卡布奇诺（大杯）</div>
+                        </div>
+                        <div class="ticket-content">
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">1.</span>
+                                <span class="step-text">拿热杯大杯</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">2.</span>
+                                <span class="step-text">加牛奶</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">3.</span>
+                                <span class="step-text">萃取倒入</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">4.</span>
+                                <span class="step-text">打奶泡</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">5.</span>
+                                <span class="step-text">倒奶泡</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">6.</span>
+                                <span class="step-text">盖上出杯</span>
+                            </div>
+                            <div class="next-cup-hint">
+                                5分钟后出下一杯
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第4/4杯：摩卡 -->
+                    <div class="single-ticket">
+                        <div class="ticket-header">
+                            <div class="ticket-title">订单#128 第4/4杯</div>
+                            <div class="ticket-subtitle">摩卡（加浓缩）</div>
+                        </div>
+                        <div class="ticket-content">
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">1.</span>
+                                <span class="step-text">拿热杯中杯</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">2.</span>
+                                <span class="step-text">加巧克力酱</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">3.</span>
+                                <span class="step-text">加牛奶</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">4.</span>
+                                <span class="step-text">双份萃取</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">5.</span>
+                                <span class="step-text">挤奶油顶</span>
+                            </div>
+                            <div class="step">
+                                <div class="checkbox"></div>
+                                <span class="step-number">6.</span>
+                                <span class="step-text">盖上出杯</span>
+                            </div>
+                            <div class="next-cup-hint">
+                                本订单完成
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="benefits">
+            <div class="benefit-card">
+                <div class="benefit-icon">🎯</div>
+                <div class="benefit-title">一次一杯</div>
+                <div class="benefit-desc">避免多订单认知超载，专注当前制作</div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">✓</div>
+                <div class="benefit-title">步骤化指引</div>
+                <div class="benefit-desc">每步不超过10字，动作指令清晰</div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon">⏱</div>
+                <div class="benefit-title">自动出单</div>
+                <div class="benefit-desc">时间延迟控制，无需记忆下一杯</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

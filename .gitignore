@@ -63,3 +63,6 @@ data/
 
 # 临时文件目录
 temp/
+
+# 排除杨老师采访记录（不上传到 GitHub）
+docs/field_visit_tang_coffee_summary.md

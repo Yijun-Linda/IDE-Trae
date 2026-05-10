@@ -3,985 +3,1123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>下一步的方案 - 从被动推送到主动感知</title>
+  <title>下一步方案 - 从被动推送到主动感知</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #fafaf9;
+      --bg-warm: #f5f4f0;
+      --text: #1a1a1a;
+      --text-soft: #5a5a5a;
+      --text-muted: #9a9a9a;
+      --accent: #b89d6e;
+      --accent-dark: #8a7348;
+      --border: #e8e6e2;
+      --radius: 8px;
+      --radius-sm: 2px;
+      --card-width: 480px;
+      --button-width: 44px;
+      --button-gap: 26px;
+      --total-combo-width: calc(var(--card-width) + var(--button-width) * 2 + var(--button-gap) * 2);
+      }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
-      background: #f5f5f3;
-      color: #2c2c2c;
-      overflow-x: hidden;
+      font-family: 'Noto Sans SC';
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-weight: 500;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* 滚动容器 */
-    .scroll-container {
-      height: 200vh;
-      position: relative;
-    }
-
-    /* 固定内容区 */
-    .fixed-content {
+    /* 3D Parallax Background with Glass Effect - 对称古铜色半圆设计 */
+    .parallax-bg {
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    /* 左下角半圆 */
+    .parallax-layer-1 {
+      position: absolute;
+      bottom: -15%;
+      left: -10%;
+      width: 45vw;
+      height: 45vw;
+      background: radial-gradient(ellipse at center, rgba(184, 157, 110, 0.18) 0%, rgba(184, 157, 110, 0.08) 40%, transparent 70%);
+      border-radius: 50%;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+    }
+
+    /* 右上角半圆 */
+    .parallax-layer-2 {
+      position: absolute;
+      top: -15%;
+      right: -10%;
+      width: 45vw;
+      height: 45vw;
+      background: radial-gradient(ellipse at center, rgba(184, 157, 110, 0.18) 0%, rgba(184, 157, 110, 0.08) 40%, transparent 70%);
+      border-radius: 50%;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
+    }
+
+    /* Main Container */
+    .main-container {
       height: 100vh;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
-      justify-content: flex-start;
-      padding: 60px 20px 40px;
+      padding: 2rem 4rem;
+      position: relative;
+      overflow: hidden;
     }
 
-    /* 标题区 */
+    /* Header - 与内容区域中心线对齐 */
     .header {
       text-align: center;
-      margin-bottom: 40px;
-      transition: opacity 0.3s ease;
-      flex-shrink: 0;
+      width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 2.5rem;
+      position: relative;
+      z-index: 10;
+      width: var(--total-combo-width);
+      max-width: 100%;
     }
 
-    .header.scrolled {
-      opacity: 0.3;
-    }
-
-    .main-title {
-      font-size: 28px;
+    .header h1 {
+      font-size: 2.0rem;
       font-weight: 600;
-      color: #2c2c2c;
-      text-align: center;
+      color: var(--text);
+      margin-bottom: 0.02rem;
+      letter-spacing: 0.16em;
     }
 
-    /* 方案包装器 */
-    .solutions-wrapper {
+    .header p {
+      font-size: 1.0rem;
+      color: var(--text-soft);
+      font-weight: 200;
+      letter-spacing: 0.18em;
+    }
+
+    /* Content Area */
+    .content-area {
       position: relative;
       width: 100%;
-      max-width: 700px;
+      max-width: 1100px;
+      height: 480px;
       display: flex;
-      flex-direction: column;
       align-items: center;
+      justify-content: center;
     }
 
-    /* 当前方案 */
-    .current-solution {
+    /* Unified Solution Card Styles */
+    .solution-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 2rem;
       width: 480px;
-      background: #fafaf9;
-      border: 1px solid #e8e8e6;
-      border-radius: 16px;
-      padding: 28px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Current Solution Card - Glass Effect - 中心线对齐 */
+    .current-solution {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 2rem;
+      width: 480px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      transition: opacity 1500ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  transform 1500ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: opacity, transform;
+      cursor: pointer;
       z-index: 2;
-      position: relative;
     }
 
-    .current-solution.hidden {
-      transform: translateY(-80px);
+    .current-solution.fade-out {
       opacity: 0;
+      transform: translate(-150%, -50%);
+      pointer-events: none;
     }
 
-    /* 成本徽章 */
-    .cost-badge {
+    .current-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .current-title-group {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .current-icon {
+      font-size: 1.25rem;
+    }
+
+    .current-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text);
+      text-align: left;
+    }
+
+    .current-version {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* 人文关怀样式 - 强调不改变现有设备的优势 */
+    .cost-label {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: linear-gradient(135deg, #a8c5a8, #b8d4b8);
-      color: #3a5a3a;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 20px;
-    }
-
-    /* 方案头部 */
-    .solution-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .solution-icon {
-      font-size: 28px;
-    }
-
-    .solution-title-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .solution-title {
-      font-size: 18px;
+      gap: 0.5rem;
+      padding: 0.625rem 1rem;
+      background: linear-gradient(135deg, rgba(184, 157, 110, 0.12) 0%, rgba(184, 157, 110, 0.05) 100%);
+      border: 1.5px solid rgba(184, 157, 110, 0.3);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      color: var(--accent-dark);
       font-weight: 600;
-      color: #2c2c2c;
+      letter-spacing: 0.02em;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(184, 157, 110, 0.1);
     }
 
-    .solution-version {
-      font-size: 12px;
-      color: #8a8a8a;
+    .cost-label::before {
+      content: '✦';
+      font-size: 0.875rem;
+      color: var(--accent);
+      animation: gentle-pulse 3s ease-in-out infinite;
     }
 
-    /* 循环流程图 */
+    .cost-label:hover {
+      background: linear-gradient(135deg, rgba(184, 157, 110, 0.18) 0%, rgba(184, 157, 110, 0.08) 100%);
+      border-color: rgba(184, 157, 110, 0.5);
+      box-shadow: 0 4px 16px rgba(184, 157, 110, 0.15);
+      transform: translateY(-1px);
+    }
+
+    @keyframes gentle-pulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.1); }
+    }
+
+    /* Flow Cycle */
     .flow-cycle {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 24px;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
     }
 
     .cycle-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
-      width: 100%;
+      gap: 0.5rem;
     }
-
     .cycle-row-middle {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 0 20px;
-      position: relative;
+      justify-content: center;
+      padding: 0 3.5rem;
+      gap: 144px; 
+      font-size: 0.875rem;
+      color: var(--text-muted);
     }
 
     .cycle-item {
-      background: #f0f0ee;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      color: #4a4a4a;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 0.625rem 1rem;
+      font-size: 0.8125rem;
+      color: var(--text-soft);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      min-width: 130px;
       text-align: center;
-      min-width: 120px;
+      transition: all 0.3s ease;
+    }
+
+    .cycle-item:hover {
+      border-color: var(--accent);
+      color: var(--text);
     }
 
     .cycle-arrow {
-      color: #b89d6e;
-      font-size: 18px;
-      font-weight: bold;
+      color: var(--text-muted);
+      font-size: 1rem;
+      font-weight: 300;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .cycle-arrow-up {
-      color: #b89d6e;
-      font-size: 16px;
-      position: absolute;
-      left: 25%;
-    }
-
+    .cycle-arrow-up,
     .cycle-arrow-down {
-      color: #b89d6e;
-      font-size: 16px;
-      position: absolute;
-      right: 25%;
+      color: var(--text-muted);
+      font-weight: 300;
     }
 
-    /* 局限性提示 */
-    .limitation-box {
-      background: #f5f0f0;
-      border: 1px solid #d4c4c4;
-      border-radius: 10px;
-      padding: 14px 18px;
+    /* 优化箭头设计 - 2px圆角线条末端 */
+    .arch-separator {
+      color: var(--accent);
+      font-size: 0.875rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 自定义圆角箭头样式 */
+    .rounded-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      position: relative;
+    }
+
+    .rounded-arrow::before {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 2px;
+      background-color: currentColor;
+      border-radius: var(--radius-sm);
+      transform: rotate(-45deg);
+      transform-origin: right center;
+      right: 2px;
+      top: 6px;
+    }
+
+    .rounded-arrow::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 2px;
+      background-color: currentColor;
+      border-radius: var(--radius-sm);
+      transform: rotate(45deg);
+      transform-origin: right center;
+      right: 2px;
+      bottom: 6px;
+    }
+
+    /* Limitation - 人文关怀样式，居中显示，紧凑包裹 */
+    .limitation-section {
+      display: inline-block;
+      padding: 0.625rem 1rem;
+      margin-top: 1rem;
+      background: linear-gradient(135deg, rgba(154, 154, 154, 0.08) 0%, rgba(154, 154, 154, 0.02) 100%);
+      border: 1px solid rgba(154, 154, 154, 0.2);
+      border-radius: var(--radius);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .limitation-section:hover {
+      background: linear-gradient(135deg, rgba(154, 154, 154, 0.12) 0%, rgba(154, 154, 154, 0.04) 100%);
+      border-color: rgba(154, 154, 154, 0.3);
     }
 
     .limitation-label {
-      font-size: 12px;
-      color: #8a6a6a;
-      margin-bottom: 4px;
-    }
-
-    .limitation-text {
-      font-size: 13px;
-      color: #6a4a4a;
-      margin-bottom: 12px;
-    }
-
-    /* 演进指示器 - 在局限性框内 */
-    .evolution-indicator-inline {
+      font-size: 1rem;
+      color: var(--text);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed #d4c4c4;
+      gap: 0.5rem;
     }
 
-    .evolution-label-inline {
-      font-size: 12px;
-      padding: 6px 12px;
-      border-radius: 16px;
+    .limitation-label::before,
+    .limitation-label::after {
+      content: '';
+      width: 30px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
     }
 
-    .evolution-label-inline.before {
-      background: #e8e8e6;
-      color: #6b6b6b;
+    .limitation-text {
+      font-size: 0.875rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+      font-weight: 400;
+      letter-spacing: 0.01em;
     }
 
-    .evolution-label-inline.after {
-      background: linear-gradient(135deg, #b89d6e, #c4ad7e);
-      color: white;
-    }
-
-    .evolution-arrow-inline {
-      font-size: 16px;
-      color: #b89d6e;
-    }
-
-    /* 下一步方案 */
-    .next-solution {
-      position: fixed;
+    /* Trigger Zone */
+    .trigger-zone {
+      position: absolute;
+      right: -40px;
       top: 50%;
-      left: 50%;
-      transform: translate(-50%, 100px);
-      width: 580px;
-      max-height: 70vh;
-      overflow-y: auto;
-      background: #fafaf9;
-      border: 2px solid #d4c4b0;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      opacity: 0;
-      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
-      z-index: 3;
-      pointer-events: none;
+      transform: translateY(-50%);
+      width: 80px;
+      height: 180px;
+      cursor: pointer;
+      z-index: 5;
     }
 
-    .next-solution.visible {
+    .trigger-hint {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.6;
+      transition: opacity 0.3s ease;
+    }
+
+    .trigger-hint:hover {
+      opacity: 1;
+    }
+
+    .trigger-arrow {
+      font-size: 1.75rem;
+      color: var(--accent);
+      animation: pulse-arrow 2s ease-in-out infinite;
+    }
+
+    .trigger-text {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      writing-mode: vertical-rl;
+    }
+
+    @keyframes pulse-arrow {
+      0%, 100% { transform: translateX(0); opacity: 0.4; }
+      50% { transform: translateX(6px); opacity: 0.8; }
+    }
+
+    /* Next Solution Area - 与标题和第一个页面对齐 */
+    .next-solution-area {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(120%, -50%);
+      opacity: 0;
+      transition: opacity 1250ms cubic-bezier(0.4, 0, 0.2, 1), 
+                  transform 1250ms cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: opacity, transform;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .next-solution-area.visible {
       transform: translate(-50%, -50%);
       opacity: 1;
       pointer-events: auto;
     }
 
-    .next-solution.fleeing {
-      transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    .next-solution {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 2rem;
+      width: 480px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
     }
 
-    /* 下一步方案头部 */
     .next-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 20px;
-      cursor: default;
+      justify-content: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .next-icon {
+      font-size: 1.75rem;
     }
 
     .next-title-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      flex: 1;
+      text-align: left;
     }
 
     .next-title {
-      font-size: 18px;
+      font-size: 1.25rem;
       font-weight: 600;
-      color: #2c2c2c;
+      color: var(--text);
+      text-align: left;
     }
 
-    .next-badge {
-      background: linear-gradient(135deg, #b89d6e, #c4ad7e);
-      color: white;
-      padding: 3px 10px;
-      border-radius: 12px;
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    /* 技术架构 */
-    .arch-section {
-      margin-bottom: 20px;
-      padding: 16px;
-      background: #f8f7f5;
-      border-radius: 12px;
-    }
-
-    .arch-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #4a4a4a;
-      margin-bottom: 12px;
-    }
-
+    /* Architecture Flow */
     .arch-flow {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 13px;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      padding: 0.875rem;
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
     }
 
     .arch-item {
-      background: white;
-      padding: 6px 12px;
-      border-radius: 6px;
-      border: 1px solid #e0e0de;
+      font-size: 0.8125rem;
+      color: var(--text-soft);
+      font-weight: 400;
     }
 
     .arch-separator {
-      color: #b89d6e;
-      font-weight: bold;
+      color: var(--accent);
+      font-size: 0.875rem;
     }
 
-    /* 实施步骤 */
-    .steps-section {
-      margin-bottom: 20px;
-    }
-
-    .steps-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #4a4a4a;
-      margin-bottom: 12px;
-    }
-
-    .step-item {
+    /* Key Features */
+    .key-features {
       display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
-      padding: 12px;
-      background: #f8f7f5;
-      border-radius: 10px;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
     }
 
-    .step-number {
-      width: 24px;
-      height: 24px;
-      background: linear-gradient(135deg, #b89d6e, #c4ad7e);
-      color: white;
-      border-radius: 50%;
+    .key-feature {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .step-content {
-      flex: 1;
-    }
-
-    .step-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #2c2c2c;
-      margin-bottom: 4px;
-    }
-
-    .step-desc {
-      font-size: 12px;
-      color: #6b6b6b;
+      align-items: flex-start;
+      gap: 0.625rem;
+      font-size: 0.875rem;
+      color: var(--text-soft);
       line-height: 1.5;
     }
 
-    .step-details {
-      margin-top: 6px;
-      padding-left: 12px;
-    }
-
-    .step-detail {
-      font-size: 11px;
-      color: #8a8a8a;
-      margin-bottom: 2px;
-      position: relative;
-    }
-
-    .step-detail::before {
-      content: "•";
-      position: absolute;
-      left: -10px;
-      color: #b89d6e;
-    }
-
-    /* 技术栈 */
-    .tech-section {
-      margin-bottom: 20px;
-    }
-
-    .tech-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #4a4a4a;
-      margin-bottom: 12px;
-    }
-
-    .tech-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 12px;
-      font-size: 12px;
-    }
-
-    .tech-table th,
-    .tech-table td {
-      padding: 8px 10px;
-      text-align: left;
-      border-bottom: 1px solid #e8e8e6;
-    }
-
-    .tech-table th {
-      background: #f0f0ee;
-      font-weight: 600;
-      color: #4a4a4a;
-    }
-
-    .tech-table td {
-      color: #6b6b6b;
-    }
-
-    .tech-software {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .tech-software-item {
-      font-size: 12px;
-      color: #6b6b6b;
-      padding: 6px 10px;
-      background: #f8f7f5;
-      border-radius: 6px;
-    }
-
-    /* 技术前瞻性 */
-    .advantages-section {
-      margin-bottom: 20px;
-    }
-
-    .advantages-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #4a4a4a;
-      margin-bottom: 12px;
-    }
-
-    .advantage-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      margin-bottom: 8px;
-      font-size: 12px;
-      color: #4a4a4a;
-    }
-
-    .advantage-icon {
-      font-size: 14px;
+    .feature-icon {
+      font-size: 1rem;
       flex-shrink: 0;
+      margin-top: 0.125rem;
     }
 
-    /* 隐私说明 */
-    .privacy-section {
-      margin-bottom: 20px;
-      padding: 14px;
-      background: #f5f0f0;
-      border-radius: 10px;
-      border-left: 3px solid #d4c4c4;
-    }
-
-    .privacy-title {
-      font-size: 12px;
+    .feature-text strong {
+      color: var(--text);
       font-weight: 600;
-      color: #6a4a4a;
-      margin-bottom: 8px;
     }
 
-    .privacy-item {
-      font-size: 11px;
-      color: #8a6a6a;
-      margin-bottom: 4px;
-      padding-left: 12px;
-      position: relative;
-    }
-
-    .privacy-item::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      color: #b89d6e;
-    }
-
-    /* 子卡片 */
+    /* Sub Cards - Aligned with main card width */
     .sub-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 16px;
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.25rem;
+      width: 480px; /* Match next-solution width (480px) */
     }
 
     .sub-card {
-      background: #f8f7f5;
-      border: 1px solid #e8e8e6;
-      border-radius: 10px;
-      padding: 14px;
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 1.25rem;
+      flex: 1;
+      min-width: 0; /* Remove min-width constraint */
+      min-height: 120px; /* Minimum height for visual consistency */
+      height: auto; /* Auto height to accommodate content */
+      display: flex;
+      flex-direction: column;
+      border-top: 2px solid var(--accent);
+      border-radius: var(--radius);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+      transition: all 0.4s ease;
     }
 
     .sub-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-
-    .sub-card-icon {
-      font-size: 24px;
-      margin-bottom: 8px;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     }
 
     .sub-card-title {
-      font-size: 12px;
+      font-size: 0.875rem;
       font-weight: 600;
-      color: #2c2c2c;
-      margin-bottom: 4px;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      flex-shrink: 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     .sub-card-desc {
-      font-size: 11px;
-      color: #6b6b6b;
-      line-height: 1.4;
+      font-size: 0.75rem;
+      color: var(--text-soft);
+      line-height: 1.6;
+      font-weight: 300;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
     }
 
-    /* 滚动提示 */
-    .scroll-hint {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
+    /* Navigation Buttons - Unified Circular Design */
+    .nav-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #999;
-      opacity: 1;
-      transition: opacity 0.3s ease;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
       z-index: 10;
     }
 
-    .scroll-hint.hidden {
+    .nav-button:hover {
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+      transform: translateY(-50%) scale(1.15);
+      border-color: rgba(184, 157, 110, 0.4);
+    }
+
+    .nav-button svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-soft);
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.3s ease;
+    }
+
+    .nav-button:hover svg {
+      stroke: var(--accent);
+    }
+
+    /* Back Button - Left Side - 相对于中心线定位 */
+    .back-button {
+      right: calc(50% + 240px + 26px); /* 50% + half of card width + spacing */
+      left: auto;
+      top: 50%;
+      transform: translateY(-50%);
       opacity: 0;
       pointer-events: none;
     }
 
-    .scroll-hint-icon {
-      font-size: 14px;
+    .next-solution-area.visible ~ .back-button,
+    .next-solution-area.visible .back-button {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    /* 滚动进度条 */
-    .scroll-progress {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 3px;
-      background: linear-gradient(90deg, #b89d6e, #c4ad7e);
-      width: 0%;
-      transition: width 0.1s linear;
-      z-index: 100;
+    /* Forward Button - Right Side - 相对于中心线定位 */
+    .forward-button {
+      left: calc(50% + 240px + 26px); /* 50% + half of card width + spacing */
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.85;
+      pointer-events: auto;
     }
 
-    /* 响应式 */
-    @media (max-width: 640px) {
-      .fixed-content {
-        padding: 40px 16px 20px;
-      }
+    .forward-button.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
 
+    /* Fullscreen Fix - 系统性修复文字重叠问题 */
+    @media (max-width: 768px) {
       .header {
-        margin-bottom: 24px;
-      }
-
-      .main-title {
-        font-size: 22px;
-      }
-
-      .current-solution {
         width: 100%;
-        max-width: 400px;
-        padding: 20px;
+      }
+      
+      .content-area {
+        max-width: 1200px;
+        height: auto;
+        min-height: 480px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      /* 全屏模式下保持中心线对齐 */
+      .current-solution {
+        transform-origin: center center;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+      
+      .next-solution {
+        transform-origin: center center;
+        width: 480px;
+      }
+      
+      .next-solution-area {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(120%, -50%);
+      }
+      
+      .next-solution-area.visible {
+        transform: translate(-50%, -50%);
+      }
+      
+      .current-solution.fade-out {
+        opacity: 0;
+        transform: translate(-150%, -50%);
+      }
+      
+      /* 全屏模式下按钮位置基于中心线定位 */
+      .forward-button {
+        left: calc(50% + 240px + 26px);
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      
+      .back-button {
+        right: calc(50% + 240px + 26px);
+        left: auto;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      
+      /* 全屏模式下确保文字清晰显示 */
+      .header h1,
+      .header p,
+      .current-title,
+      .next-title,
+      .cycle-item,
+      .arch-item,
+      .key-feature,
+      .sub-card-desc,
+      .limitation-text {
+        text-shadow: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      /* 防止元素重叠 */
+      .trigger-zone {
+        z-index: 10;
+      }
+      
+      .back-button {
+        z-index: 15;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 1.5rem;
+        overflow-y: auto;
+        height: auto;
+        min-height: 100vh;
       }
 
+      .header h1 {
+        font-size: 1.75rem;
+      }
+
+      .content-area {
+        height: auto;
+        min-height: 400px;
+      }
+
+      .current-solution,
       .next-solution {
-        width: 95%;
-        max-width: 500px;
-        padding: 20px;
+        width: 100%;
+        max-width: 360px;
+        padding: 1.5rem;
+      }
+
+      .trigger-zone {
+        right: 0;
+        width: 60px;
+      }
+
+      .next-solution-area {
+        right: -100%;
+      }
+
+      .next-solution-area.visible {
+        right: 50%;
       }
 
       .sub-cards {
-        grid-template-columns: 1fr;
-      }
-
-      .cycle-row {
         flex-direction: column;
-        gap: 8px;
+        gap: 0.875rem;
+        width: 100%; /* Full width on mobile */
+        max-width: 360px; /* Match card width */
       }
 
-      .cycle-arrow-vertical {
-        flex-direction: row;
-        gap: 40px;
+      .sub-card {
+        min-width: auto;
+        width: 100%;
+        height: auto; /* Auto height on mobile for better content display */
+        min-height: 100px;
       }
 
-      .arch-flow {
-        flex-direction: column;
+      .sub-card-desc {
+        overflow: visible;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
 
-      .tech-table {
-        font-size: 11px;
+      .back-button {
+        left: calc(50% - 180px - 50px); /* 50% - half of mobile card width (360px/2) - button offset */
       }
 
-      .tech-table th,
-      .tech-table td {
-        padding: 6px 8px;
+      .forward-button {
+        right: calc(50% - 180px - 50px); /* 50% - half of mobile card width (360px/2) - button offset */
       }
-
-      .evolution-indicator-inline {
-        flex-direction: column;
-        gap: 8px;
-      }
-    }
-
-    /* 滚动条样式 */
-    .next-solution::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .next-solution::-webkit-scrollbar-track {
-      background: #f0f0ee;
-      border-radius: 3px;
-    }
-
-    .next-solution::-webkit-scrollbar-thumb {
-      background: #d4c4b0;
-      border-radius: 3px;
-    }
-
-    .next-solution::-webkit-scrollbar-thumb:hover {
-      background: #b89d6e;
     }
   </style>
 </head>
 <body>
-  <!-- 滚动进度条 -->
-  <div class="scroll-progress" id="scrollProgress"></div>
+  <!-- 3D Parallax Background -->
+  <div class="parallax-bg">
+    <div class="parallax-layer parallax-layer-1"></div>
+    <div class="parallax-layer parallax-layer-2"></div>
+  </div>
 
-  <!-- 滚动容器 -->
-  <div class="scroll-container">
-    <!-- 固定内容 -->
-    <div class="fixed-content">
-      <!-- 标题 -->
-      <div class="header" id="header">
-        <h1 class="main-title">下一步的方案</h1>
-      </div>
+  <div class="main-container">
+    <!-- Header -->
+    <header class="header">
+      <h1>下一步的方案</h1>
+      <p>从被动推送到主动感知</p>
+    </header>
 
-      <!-- 方案包装器 -->
-      <div class="solutions-wrapper">
-        <!-- 当前方案：云打印机 -->
-        <div class="current-solution" id="currentSolution">
-          <div class="cost-badge">
-            ✓ 低成本 · 利用现有设备
-          </div>
-
-          <div class="solution-header">
-            <span class="solution-icon">🧾</span>
-            <div class="solution-title-group">
-              <div class="solution-title">方案一：云打印机</div>
-              <div class="solution-version">v0.4</div>
+    <!-- Content Area -->
+    <div class="content-area">
+      <!-- Current Solution -->
+      <div class="current-solution" id="currentSolution">
+        <div class="current-header">
+          <div class="current-title-group">
+            <span class="current-icon">🧾</span>
+            <div>
+              <div class="current-title">当前方案</div>
+              <div class="current-version">云打印机 · v0.4</div>
             </div>
           </div>
+          <div class="cost-label">低成本 · 不改变现有设备的布局</div>
+        </div>
 
-          <!-- 循环流程 -->
-          <div class="flow-cycle">
-            <div class="cycle-row">
-              <div class="cycle-item">Webhook接收订单</div>
-              <span class="cycle-arrow">→</span>
-              <div class="cycle-item">AI拆解为步骤</div>
-            </div>
-            <div class="cycle-row-middle">
-              <span class="cycle-arrow-up">↑</span>
-              <span class="cycle-arrow-down">↓</span>
-            </div>
-            <div class="cycle-row">
-              <div class="cycle-item">员工主动查看</div>
-              <span class="cycle-arrow">←</span>
-              <div class="cycle-item">云打印机出票</div>
-            </div>
+        <!-- Flow Cycle -->
+        <div class="flow-cycle">
+          <div class="cycle-row">
+            <div class="cycle-item">Webhook 接单</div>
+            <span class="cycle-arrow">→</span>
+            <div class="cycle-item">AI拆解为步骤</div>
           </div>
+          <div class="cycle-row-middle">
+            <span class="cycle-arrow-up">↑</span>
+            <span class="cycle-arrow-down">↓</span>
+          </div>
+          <div class="cycle-row">
+            <div class="cycle-item">员工主动查看</div>
+            <span class="cycle-arrow">←</span>
+            <div class="cycle-item">云打印机出票</div>
+          </div>
+        </div>
 
-          <!-- 局限性 -->
-          <div class="limitation-box">
-            <div class="limitation-label">⚠ 局限性</div>
+        <!-- Limitation -->
+        <div style="text-align: center;">
+          <div class="limitation-section">
+            <div class="limitation-label">局限性</div>
             <div class="limitation-text">员工需主动查看，无法感知困惑状态</div>
           </div>
+        </div>
+      </div>
 
-          <!-- 演进指示器 - 单独放置 -->
-          <div class="evolution-indicator-inline">
-            <span class="evolution-label-inline before">被动推送</span>
-            <span class="evolution-arrow-inline">→</span>
-            <span class="evolution-label-inline after">主动感知</span>
+      <!-- Forward Button - Right Side Navigation -->
+      <div class="nav-button forward-button" id="forwardButton">
+        <svg viewBox="0 0 24 24">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </div>
+
+      <!-- Next Solution Area -->
+      <div class="next-solution-area" id="nextSolutionArea">
+        <!-- Back Button - Left Side Navigation -->
+        <div class="nav-button back-button" id="backButton">
+          <svg viewBox="0 0 24 24">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </div>
+        
+        <div class="next-solution">
+          <div class="next-header">
+            <span class="next-icon">📹</span>
+            <div class="next-title-group">
+              <div class="next-title">边缘感知方案</div>
+            </div>
+          </div>
+
+          <!-- Architecture Flow -->
+          <div class="arch-flow">
+            <span class="arch-item">📹 摄像头感知</span>
+            <span class="arch-separator">→</span>
+            <span class="arch-item">🧠 边缘AI判断</span>
+            <span class="arch-separator">→</span>
+            <span class="arch-item">🔊 语音提醒</span>
+          </div>
+
+          <!-- Key Features -->
+          <div class="key-features">
+            <div class="key-feature">
+              <span class="feature-icon">⚡</span>
+              <span class="feature-text"><strong>零延迟：</strong>3秒内完成检测→决策→语音全流程</span>
+            </div>
+            <div class="key-feature">
+              <span class="feature-icon">🔒</span>
+              <span class="feature-text"><strong>隐私保护：</strong>本地处理，数据不上云</span>
+            </div>
+            <div class="key-feature">
+              <span class="feature-icon">💬</span>
+              <span class="feature-text"><strong>主动关怀：</strong>检测困惑时主动语音提醒</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub Cards -->
+        <div class="sub-cards">
+          <div class="sub-card">
+            <div class="sub-card-title">📹 边缘感知</div>
+            <div class="sub-card-desc">摄像头持续监测工作台，实时捕捉员工操作状态与困惑信号</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-title">🔒 隐私本地处理</div>
+            <div class="sub-card-desc">所有视频分析在边缘设备本地完成，不上传云端，保护隐私</div>
+          </div>
+          <div class="sub-card">
+            <div class="sub-card-title">💬 主动交互</div>
+            <div class="sub-card-desc">温暖语音主动提供帮助，像辅导员在旁指导而非机器指令</div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- 下一步方案：边缘感知 - 固定在视口中央，悬停时逃离 -->
-  <div class="next-solution" id="nextSolution">
-    <div class="next-header" id="nextHeader">
-      <span class="solution-icon">📹</span>
-      <div class="next-title-group">
-        <div class="next-title">边缘感知方案</div>
-        <div class="next-badge">下一步</div>
-      </div>
-    </div>
-
-    <!-- 技术架构 -->
-    <div class="arch-section">
-      <div class="arch-title">技术架构</div>
-      <div class="arch-flow">
-        <span class="arch-item">📹 摄像头</span>
-        <span class="arch-separator">→</span>
-        <span class="arch-item">🧠 边缘设备</span>
-        <span class="arch-separator">→</span>
-        <span class="arch-item">🔊 语音合成</span>
-        <span class="arch-separator">→</span>
-        <span class="arch-item">🎧 扬声器</span>
-      </div>
-      <div style="text-align: center; margin-top: 10px; font-size: 11px; color: #8a8a8a;">
-        结合订单数据 → AI异常判断 → 语音输出
-      </div>
-    </div>
-
-    <!-- 实施步骤 -->
-    <div class="steps-section">
-      <div class="steps-title">实施步骤</div>
-      
-      <div class="step-item">
-        <span class="step-number">1</span>
-        <div class="step-content">
-          <div class="step-title">视觉感知层</div>
-          <div class="step-desc">摄像头持续监测工作台，检测"停滞不知所措"行为模式</div>
-        </div>
-      </div>
-
-      <div class="step-item">
-        <span class="step-number">2</span>
-        <div class="step-content">
-          <div class="step-title">边缘AI判断层</div>
-          <div class="step-desc">本地运行行为识别模型，结合订单数据判断是否需要介入</div>
-        </div>
-      </div>
-
-      <div class="step-item">
-        <span class="step-number">3</span>
-        <div class="step-content">
-          <div class="step-title">语音交互层</div>
-          <div class="step-desc">TTS生成自然语音提示，像辅导员而非机器</div>
-          <div class="step-details">
-            <div class="step-detail">温暖语音："需要帮忙吗？"</div>
-            <div class="step-detail">辅导员风格，非机器指令</div>
-            <div class="step-detail">可调节音量和提示频率</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 技术栈 -->
-    <div class="tech-section">
-      <div class="tech-title">技术栈与设备</div>
-      <table class="tech-table">
-        <thead>
-          <tr>
-            <th>设备</th>
-            <th>算力</th>
-            <th>成本</th>
-            <th>适用场景</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>ESP32-S3</td>
-            <td>低</td>
-            <td>极低</td>
-            <td>简单视觉任务</td>
-          </tr>
-          <tr>
-            <td>Raspberry Pi 5</td>
-            <td>中</td>
-            <td>低</td>
-            <td>推荐方案</td>
-          </tr>
-          <tr>
-            <td>NVIDIA Jetson Nano</td>
-            <td>高</td>
-            <td>中</td>
-            <td>专业级需求</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="tech-software">
-        <div class="tech-software-item">Python + OpenCV（视觉处理）</div>
-        <div class="tech-software-item">TensorRT / ONNX Runtime（本地推理）</div>
-        <div class="tech-software-item">边缘TTS（Piper / Mimic3）</div>
-        <div class="tech-software-item">咖啡店工作台部署（仅拍摄工作区域）</div>
-      </div>
-    </div>
-
-    <!-- 技术前瞻性 -->
-    <div class="advantages-section">
-      <div class="advantages-title">技术前瞻性</div>
-      <div class="advantage-item">
-        <span class="advantage-icon">⚡</span>
-        <span>零延迟响应（<3秒）：检测→决策→语音输出</span>
-      </div>
-      <div class="advantage-item">
-        <span class="advantage-icon">🔒</span>
-        <span>100%本地处理：视频分析不上传云端，隐私零泄露</span>
-      </div>
-      <div class="advantage-item">
-        <span class="advantage-icon">📈</span>
-        <span>可扩展部署：单店验证后可快速复制至多店</span>
-      </div>
-      <div class="advantage-item">
-        <span class="advantage-icon">🎯</span>
-        <span>适应性强：可学习"这家店的正常操作"</span>
-      </div>
-    </div>
-
-    <!-- 隐私说明 -->
-    <div class="privacy-section">
-      <div class="privacy-title">🔒 伦理与隐私考量</div>
-      <div class="privacy-item">摄像头只拍摄工作台区域，不拍顾客</div>
-      <div class="privacy-item">边缘处理，数据不上传云端</div>
-      <div class="privacy-item">明确告知"这是帮助工具，不是监控"</div>
-      <div class="privacy-item">避免员工感到被"机器盯着"的焦虑</div>
-    </div>
-
-    <!-- 子卡片 -->
-    <div class="sub-cards">
-      <div class="sub-card">
-        <div class="sub-card-icon">📹</div>
-        <div class="sub-card-title">边缘感知</div>
-        <div class="sub-card-desc">摄像头持续监测工作台，实时捕捉员工操作状态与困惑信号</div>
-      </div>
-      <div class="sub-card">
-        <div class="sub-card-icon">🔒</div>
-        <div class="sub-card-title">隐私本地处理</div>
-        <div class="sub-card-desc">所有视频分析在边缘设备本地完成，不上传云端，保护隐私</div>
-      </div>
-      <div class="sub-card">
-        <div class="sub-card-icon">💬</div>
-        <div class="sub-card-title">主动交互</div>
-        <div class="sub-card-desc">温暖语音主动提供帮助，像辅导员在旁指导而非机器指令</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 滚动提示 -->
-  <div class="scroll-hint" id="scrollHint">
-    <span class="scroll-hint-icon">🖱️</span>
-    <span>向下滚动查看下一步方案</span>
   </div>
 
   <script>
-    // 获取元素
-    const header = document.getElementById('header');
+    // Parallax Effect - 对称半圆视差效果
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      
+      // 左下角半圆 - 向鼠标反方向移动
+      const layer1 = document.querySelector('.parallax-layer-1');
+      if (layer1) {
+        layer1.style.transform = `translate(${-x * 0.8}px, ${y * 0.8}px)`;
+      }
+      
+      // 右上角半圆 - 向鼠标方向移动
+      const layer2 = document.querySelector('.parallax-layer-2');
+      if (layer2) {
+        layer2.style.transform = `translate(${x * 0.8}px, ${-y * 0.8}px)`;
+      }
+    });
+
+    // Elements
     const currentSolution = document.getElementById('currentSolution');
-    const nextSolution = document.getElementById('nextSolution');
-    const scrollHint = document.getElementById('scrollHint');
-    const scrollProgress = document.getElementById('scrollProgress');
+    const nextSolutionArea = document.getElementById('nextSolutionArea');
+    const forwardButton = document.getElementById('forwardButton');
+    const backButton = document.getElementById('backButton');
+    // ✅ 新增：获取头部标题元素
+    const headerTitle = document.querySelector('.header h1');
+    const headerSubtitle = document.querySelector('.header p');
 
-    // 滚动处理函数
-    let nextSolutionTimeout = null;
-    
-    function handleScroll() {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.body.scrollHeight;
-      const scrollPercent = Math.min(scrollY / (documentHeight - windowHeight), 1);
-
-      // 更新进度条
-      scrollProgress.style.width = `${scrollPercent * 100}%`;
-
-      // 标题动画
-      if (scrollY > 100) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
+    // ✅ 新增：配置两套头部文字
+    const HEADINGS = {
+      current: {
+        title: '现有方案',
+        subtitle: '被动推送 · 员工主动查看'
+      },
+      next: {
+        title: '下一步的方案',
+        subtitle: '从被动推送到主动感知'
       }
+    };
 
-      // 方案切换动画 - 延迟显示下一步方案
-      if (scrollY > 300) {
-        // 隐藏当前方案
-        currentSolution.classList.add('hidden');
-        scrollHint.classList.add('hidden');
-        
-        // 延迟1秒显示下一步方案
-        if (!nextSolutionTimeout && !nextSolution.classList.contains('visible')) {
-          nextSolutionTimeout = setTimeout(() => {
-            nextSolution.classList.add('visible');
-            nextSolutionTimeout = null;
-          }, 1000);
-        }
-      } else {
-        // 滚动回顶部，重置状态
-        currentSolution.classList.remove('hidden');
-        nextSolution.classList.remove('visible');
-        scrollHint.classList.remove('hidden');
-        
-        // 清除延迟定时器
-        if (nextSolutionTimeout) {
-          clearTimeout(nextSolutionTimeout);
-          nextSolutionTimeout = null;
-        }
-      }
+    // Animation State
+    let isAnimating = false;
+    let animationFrameId = null;
+
+    // Debounce function - 350ms delay
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
     }
 
-    // 节流滚动监听
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
-    });
+    // ✅ 初始加载：显示「现有方案」头部
+    headerTitle.textContent = HEADINGS.current.title;
+    headerSubtitle.textContent = HEADINGS.current.subtitle;
 
-    // 初始化
-    handleScroll();
+    // Show next solution - 1250ms animation (slide in from right)
+    const showNextSolution = debounce(() => {
+      if (isAnimating) return;
+      isAnimating = true;
 
-    // 触摸支持（移动端）
-    let touchStartY = 0;
-    window.addEventListener('touchstart', (e) => {
-      touchStartY = e.touches[0].clientY;
-    });
-
-    window.addEventListener('touchmove', (e) => {
-      const touchY = e.touches[0].clientY;
-      const deltaY = touchStartY - touchY;
+      // Fade out current solution
+      currentSolution.classList.add('fade-out');
       
-      if (Math.abs(deltaY) > 50) {
-        if (deltaY > 0 && !nextSolution.classList.contains('visible')) {
-          // 向上滑动 - 显示下一步
-          window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-        } else if (deltaY < 0 && nextSolution.classList.contains('visible')) {
-          // 向下滑动 - 显示当前
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Show next solution
+      nextSolutionArea.classList.add('visible');
+      
+      // ✅ 切换为「下一步的方案」头部
+      headerTitle.textContent = HEADINGS.next.title;
+      headerSubtitle.textContent = HEADINGS.next.subtitle;
+      
+      // Hide forward button, show back button
+      forwardButton.classList.add('hidden');
+      
+      // Reset animation flag
+      setTimeout(() => {
+        isAnimating = false;
+      }, 1250);
+    }, 350);
+
+    // Hide next solution (go back) - 1500ms animation (fade out to left)
+    const hideNextSolution = debounce(() => {
+      if (isAnimating) return;
+      isAnimating = true;
+
+      // Hide next solution
+      nextSolutionArea.classList.remove('visible');
+      
+      // Fade in current solution
+      currentSolution.classList.remove('fade-out');
+      
+      // ✅ 切换回「现有方案」头部
+      headerTitle.textContent = HEADINGS.current.title;
+      headerSubtitle.textContent = HEADINGS.current.subtitle;
+      
+      // Show forward button
+      forwardButton.classList.remove('hidden');
+      
+      // Reset animation flag
+      setTimeout(() => {
+        isAnimating = false;
+      }, 1500);
+    }, 350);
+
+    // Event Listeners
+    forwardButton.addEventListener('click', showNextSolution);
+    forwardButton.addEventListener('mouseenter', showNextSolution);
+    backButton.addEventListener('click', hideNextSolution);
+
+    // Touch support with 350ms delay
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      // Swipe left to show next, swipe right to go back
+      if (diff > 50 && !nextSolutionArea.classList.contains('visible')) {
+        showNextSolution();
+      } else if (diff < -50 && nextSolutionArea.classList.contains('visible')) {
+        hideNextSolution();
+      }
+    }, { passive: true });
+
+    // Pause animation when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
         }
       }
     });
 
-    // 键盘支持
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowDown' && !nextSolution.classList.contains('visible')) {
-        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
-      } else if (e.key === 'ArrowUp' && nextSolution.classList.contains('visible')) {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Performance optimization: Use setInterval for stable 30fps scroll experience
+    // 33ms interval = ~30fps, providing smooth yet stable animation without stuttering
+    function smoothAnimation30fps() {
+      const frameInterval = 33; // ~30fps
+      let lastTime = 0;
+      
+      function frameLoop(currentTime) {
+        animationFrameId = requestAnimationFrame(frameLoop);
+        
+        const deltaTime = currentTime - lastTime;
+        if (deltaTime >= frameInterval) {
+          lastTime = currentTime - (deltaTime % frameInterval);
+          // Frame rendering happens here
+        }
+      }
+      
+      animationFrameId = requestAnimationFrame(frameLoop);
+    }
+    smoothAnimation30fps();
+
+    // Fullscreen detection and adjustment
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        document.body.classList.add('is-fullscreen');
+      } else {
+        document.body.classList.remove('is-fullscreen');
       }
     });
   </script>

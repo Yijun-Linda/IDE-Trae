@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>下一步的方案 - 从被动推送到主动感知</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+      background: #f5f5f3;
+      color: #2c2c2c;
+      overflow-x: hidden;
+    }
+
+    /* 滚动容器 */
+    .scroll-container {
+      height: 200vh;
+      position: relative;
+    }
+
+    /* 固定内容区 */
+    .fixed-content {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 60px 20px 40px;
+    }
+
+    /* 标题区 */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      transition: opacity 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .header.scrolled {
+      opacity: 0.3;
+    }
+
+    .main-title {
+      font-size: 28px;
+      font-weight: 600;
+      color: #2c2c2c;
+      text-align: center;
+    }
+
+    /* 方案包装器 */
+    .solutions-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 当前方案 */
+    .current-solution {
+      width: 480px;
+      background: #fafaf9;
+      border: 1px solid #e8e8e6;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+      z-index: 2;
+      position: relative;
+    }
+
+    .current-solution.hidden {
+      transform: translateY(-80px);
+      opacity: 0;
+    }
+
+    /* 成本徽章 */
+    .cost-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #a8c5a8, #b8d4b8);
+      color: #3a5a3a;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    /* 方案头部 */
+    .solution-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .solution-icon {
+      font-size: 28px;
+    }
+
+    .solution-title-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .solution-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c2c2c;
+    }
+
+    .solution-version {
+      font-size: 12px;
+      color: #8a8a8a;
+    }
+
+    /* 循环流程图 */
+    .flow-cycle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .cycle-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .cycle-row-middle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    .cycle-item {
+      background: #f0f0ee;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #4a4a4a;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .cycle-arrow {
+      color: #b89d6e;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .cycle-arrow-up {
+      color: #b89d6e;
+      font-size: 16px;
+      position: absolute;
+      left: 25%;
+    }
+
+    .cycle-arrow-down {
+      color: #b89d6e;
+      font-size: 16px;
+      position: absolute;
+      right: 25%;
+    }
+
+    /* 局限性提示 */
+    .limitation-box {
+      background: #f5f0f0;
+      border: 1px solid #d4c4c4;
+      border-radius: 10px;
+      padding: 14px 18px;
+    }
+
+    .limitation-label {
+      font-size: 12px;
+      color: #8a6a6a;
+      margin-bottom: 4px;
+    }
+
+    .limitation-text {
+      font-size: 13px;
+      color: #6a4a4a;
+      margin-bottom: 12px;
+    }
+
+    /* 演进指示器 - 在局限性框内 */
+    .evolution-indicator-inline {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #d4c4c4;
+    }
+
+    .evolution-label-inline {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 16px;
+    }
+
+    .evolution-label-inline.before {
+      background: #e8e8e6;
+      color: #6b6b6b;
+    }
+
+    .evolution-label-inline.after {
+      background: linear-gradient(135deg, #b89d6e, #c4ad7e);
+      color: white;
+    }
+
+    .evolution-arrow-inline {
+      font-size: 16px;
+      color: #b89d6e;
+    }
+
+    /* 下一步方案 */
+    .next-solution {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, 100px);
+      width: 580px;
+      max-height: 70vh;
+      overflow-y: auto;
+      background: #fafaf9;
+      border: 2px solid #d4c4b0;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      opacity: 0;
+      transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .next-solution.visible {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .next-solution.fleeing {
+      transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    }
+
+    /* 下一步方案头部 */
+    .next-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      cursor: default;
+    }
+
+    .next-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .next-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c2c2c;
+    }
+
+    .next-badge {
+      background: linear-gradient(135deg, #b89d6e, #c4ad7e);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* 技术架构 */
+    .arch-section {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: #f8f7f5;
+      border-radius: 12px;
+    }
+
+    .arch-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a4a4a;
+      margin-bottom: 12px;
+    }
+
+    .arch-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .arch-item {
+      background: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #e0e0de;
+    }
+
+    .arch-separator {
+      color: #b89d6e;
+      font-weight: bold;
+    }
+
+    /* 实施步骤 */
+    .steps-section {
+      margin-bottom: 20px;
+    }
+
+    .steps-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a4a4a;
+      margin-bottom: 12px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: #f8f7f5;
+      border-radius: 10px;
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, #b89d6e, #c4ad7e);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #2c2c2c;
+      margin-bottom: 4px;
+    }
+
+    .step-desc {
+      font-size: 12px;
+      color: #6b6b6b;
+      line-height: 1.5;
+    }
+
+    .step-details {
+      margin-top: 6px;
+      padding-left: 12px;
+    }
+
+    .step-detail {
+      font-size: 11px;
+      color: #8a8a8a;
+      margin-bottom: 2px;
+      position: relative;
+    }
+
+    .step-detail::before {
+      content: "•";
+      position: absolute;
+      left: -10px;
+      color: #b89d6e;
+    }
+
+    /* 技术栈 */
+    .tech-section {
+      margin-bottom: 20px;
+    }
+
+    .tech-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a4a4a;
+      margin-bottom: 12px;
+    }
+
+    .tech-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      font-size: 12px;
+    }
+
+    .tech-table th,
+    .tech-table td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e8e8e6;
+    }
+
+    .tech-table th {
+      background: #f0f0ee;
+      font-weight: 600;
+      color: #4a4a4a;
+    }
+
+    .tech-table td {
+      color: #6b6b6b;
+    }
+
+    .tech-software {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .tech-software-item {
+      font-size: 12px;
+      color: #6b6b6b;
+      padding: 6px 10px;
+      background: #f8f7f5;
+      border-radius: 6px;
+    }
+
+    /* 技术前瞻性 */
+    .advantages-section {
+      margin-bottom: 20px;
+    }
+
+    .advantages-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a4a4a;
+      margin-bottom: 12px;
+    }
+
+    .advantage-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #4a4a4a;
+    }
+
+    .advantage-icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* 隐私说明 */
+    .privacy-section {
+      margin-bottom: 20px;
+      padding: 14px;
+      background: #f5f0f0;
+      border-radius: 10px;
+      border-left: 3px solid #d4c4c4;
+    }
+
+    .privacy-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #6a4a4a;
+      margin-bottom: 8px;
+    }
+
+    .privacy-item {
+      font-size: 11px;
+      color: #8a6a6a;
+      margin-bottom: 4px;
+      padding-left: 12px;
+      position: relative;
+    }
+
+    .privacy-item::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: #b89d6e;
+    }
+
+    /* 子卡片 */
+    .sub-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .sub-card {
+      background: #f8f7f5;
+      border: 1px solid #e8e8e6;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sub-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .sub-card-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .sub-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #2c2c2c;
+      margin-bottom: 4px;
+    }
+
+    .sub-card-desc {
+      font-size: 11px;
+      color: #6b6b6b;
+      line-height: 1.4;
+    }
+
+    /* 滚动提示 */
+    .scroll-hint {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #999;
+      opacity: 1;
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+    .scroll-hint.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .scroll-hint-icon {
+      font-size: 14px;
+    }
+
+    /* 滚动进度条 */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #b89d6e, #c4ad7e);
+      width: 0%;
+      transition: width 0.1s linear;
+      z-index: 100;
+    }
+
+    /* 响应式 */
+    @media (max-width: 640px) {
+      .fixed-content {
+        padding: 40px 16px 20px;
+      }
+
+      .header {
+        margin-bottom: 24px;
+      }
+
+      .main-title {
+        font-size: 22px;
+      }
+
+      .current-solution {
+        width: 100%;
+        max-width: 400px;
+        padding: 20px;
+      }
+
+      .next-solution {
+        width: 95%;
+        max-width: 500px;
+        padding: 20px;
+      }
+
+      .sub-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .cycle-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .cycle-arrow-vertical {
+        flex-direction: row;
+        gap: 40px;
+      }
+
+      .arch-flow {
+        flex-direction: column;
+      }
+
+      .tech-table {
+        font-size: 11px;
+      }
+
+      .tech-table th,
+      .tech-table td {
+        padding: 6px 8px;
+      }
+
+      .evolution-indicator-inline {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    /* 滚动条样式 */
+    .next-solution::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .next-solution::-webkit-scrollbar-track {
+      background: #f0f0ee;
+      border-radius: 3px;
+    }
+
+    .next-solution::-webkit-scrollbar-thumb {
+      background: #d4c4b0;
+      border-radius: 3px;
+    }
+
+    .next-solution::-webkit-scrollbar-thumb:hover {
+      background: #b89d6e;
+    }
+  </style>
+</head>
+<body>
+  <!-- 滚动进度条 -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- 滚动容器 -->
+  <div class="scroll-container">
+    <!-- 固定内容 -->
+    <div class="fixed-content">
+      <!-- 标题 -->
+      <div class="header" id="header">
+        <h1 class="main-title">下一步的方案</h1>
+      </div>
+
+      <!-- 方案包装器 -->
+      <div class="solutions-wrapper">
+        <!-- 当前方案：云打印机 -->
+        <div class="current-solution" id="currentSolution">
+          <div class="cost-badge">
+            ✓ 低成本 · 利用现有设备
+          </div>
+
+          <div class="solution-header">
+            <span class="solution-icon">🧾</span>
+            <div class="solution-title-group">
+              <div class="solution-title">方案一：云打印机</div>
+              <div class="solution-version">v0.4</div>
+            </div>
+          </div>
+
+          <!-- 循环流程 -->
+          <div class="flow-cycle">
+            <div class="cycle-row">
+              <div class="cycle-item">Webhook接收订单</div>
+              <span class="cycle-arrow">→</span>
+              <div class="cycle-item">AI拆解为步骤</div>
+            </div>
+            <div class="cycle-row-middle">
+              <span class="cycle-arrow-up">↑</span>
+              <span class="cycle-arrow-down">↓</span>
+            </div>
+            <div class="cycle-row">
+              <div class="cycle-item">员工主动查看</div>
+              <span class="cycle-arrow">←</span>
+              <div class="cycle-item">云打印机出票</div>
+            </div>
+          </div>
+
+          <!-- 局限性 -->
+          <div class="limitation-box">
+            <div class="limitation-label">⚠ 局限性</div>
+            <div class="limitation-text">员工需主动查看，无法感知困惑状态</div>
+          </div>
+
+          <!-- 演进指示器 - 单独放置 -->
+          <div class="evolution-indicator-inline">
+            <span class="evolution-label-inline before">被动推送</span>
+            <span class="evolution-arrow-inline">→</span>
+            <span class="evolution-label-inline after">主动感知</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 下一步方案：边缘感知 - 固定在视口中央，悬停时逃离 -->
+  <div class="next-solution" id="nextSolution">
+    <div class="next-header" id="nextHeader">
+      <span class="solution-icon">📹</span>
+      <div class="next-title-group">
+        <div class="next-title">边缘感知方案</div>
+        <div class="next-badge">下一步</div>
+      </div>
+    </div>
+
+    <!-- 技术架构 -->
+    <div class="arch-section">
+      <div class="arch-title">技术架构</div>
+      <div class="arch-flow">
+        <span class="arch-item">📹 摄像头</span>
+        <span class="arch-separator">→</span>
+        <span class="arch-item">🧠 边缘设备</span>
+        <span class="arch-separator">→</span>
+        <span class="arch-item">🔊 语音合成</span>
+        <span class="arch-separator">→</span>
+        <span class="arch-item">🎧 扬声器</span>
+      </div>
+      <div style="text-align: center; margin-top: 10px; font-size: 11px; color: #8a8a8a;">
+        结合订单数据 → AI异常判断 → 语音输出
+      </div>
+    </div>
+
+    <!-- 实施步骤 -->
+    <div class="steps-section">
+      <div class="steps-title">实施步骤</div>
+      
+      <div class="step-item">
+        <span class="step-number">1</span>
+        <div class="step-content">
+          <div class="step-title">视觉感知层</div>
+          <div class="step-desc">摄像头持续监测工作台，检测"停滞不知所措"行为模式</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-number">2</span>
+        <div class="step-content">
+          <div class="step-title">边缘AI判断层</div>
+          <div class="step-desc">本地运行行为识别模型，结合订单数据判断是否需要介入</div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <span class="step-number">3</span>
+        <div class="step-content">
+          <div class="step-title">语音交互层</div>
+          <div class="step-desc">TTS生成自然语音提示，像辅导员而非机器</div>
+          <div class="step-details">
+            <div class="step-detail">温暖语音："需要帮忙吗？"</div>
+            <div class="step-detail">辅导员风格，非机器指令</div>
+            <div class="step-detail">可调节音量和提示频率</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 技术栈 -->
+    <div class="tech-section">
+      <div class="tech-title">技术栈与设备</div>
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>设备</th>
+            <th>算力</th>
+            <th>成本</th>
+            <th>适用场景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ESP32-S3</td>
+            <td>低</td>
+            <td>极低</td>
+            <td>简单视觉任务</td>
+          </tr>
+          <tr>
+            <td>Raspberry Pi 5</td>
+            <td>中</td>
+            <td>低</td>
+            <td>推荐方案</td>
+          </tr>
+          <tr>
+            <td>NVIDIA Jetson Nano</td>
+            <td>高</td>
+            <td>中</td>
+            <td>专业级需求</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="tech-software">
+        <div class="tech-software-item">Python + OpenCV（视觉处理）</div>
+        <div class="tech-software-item">TensorRT / ONNX Runtime（本地推理）</div>
+        <div class="tech-software-item">边缘TTS（Piper / Mimic3）</div>
+        <div class="tech-software-item">咖啡店工作台部署（仅拍摄工作区域）</div>
+      </div>
+    </div>
+
+    <!-- 技术前瞻性 -->
+    <div class="advantages-section">
+      <div class="advantages-title">技术前瞻性</div>
+      <div class="advantage-item">
+        <span class="advantage-icon">⚡</span>
+        <span>零延迟响应（<3秒）：检测→决策→语音输出</span>
+      </div>
+      <div class="advantage-item">
+        <span class="advantage-icon">🔒</span>
+        <span>100%本地处理：视频分析不上传云端，隐私零泄露</span>
+      </div>
+      <div class="advantage-item">
+        <span class="advantage-icon">📈</span>
+        <span>可扩展部署：单店验证后可快速复制至多店</span>
+      </div>
+      <div class="advantage-item">
+        <span class="advantage-icon">🎯</span>
+        <span>适应性强：可学习"这家店的正常操作"</span>
+      </div>
+    </div>
+
+    <!-- 隐私说明 -->
+    <div class="privacy-section">
+      <div class="privacy-title">🔒 伦理与隐私考量</div>
+      <div class="privacy-item">摄像头只拍摄工作台区域，不拍顾客</div>
+      <div class="privacy-item">边缘处理，数据不上传云端</div>
+      <div class="privacy-item">明确告知"这是帮助工具，不是监控"</div>
+      <div class="privacy-item">避免员工感到被"机器盯着"的焦虑</div>
+    </div>
+
+    <!-- 子卡片 -->
+    <div class="sub-cards">
+      <div class="sub-card">
+        <div class="sub-card-icon">📹</div>
+        <div class="sub-card-title">边缘感知</div>
+        <div class="sub-card-desc">摄像头持续监测工作台，实时捕捉员工操作状态与困惑信号</div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-card-icon">🔒</div>
+        <div class="sub-card-title">隐私本地处理</div>
+        <div class="sub-card-desc">所有视频分析在边缘设备本地完成，不上传云端，保护隐私</div>
+      </div>
+      <div class="sub-card">
+        <div class="sub-card-icon">💬</div>
+        <div class="sub-card-title">主动交互</div>
+        <div class="sub-card-desc">温暖语音主动提供帮助，像辅导员在旁指导而非机器指令</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 滚动提示 -->
+  <div class="scroll-hint" id="scrollHint">
+    <span class="scroll-hint-icon">🖱️</span>
+    <span>向下滚动查看下一步方案</span>
+  </div>
+
+  <script>
+    // 获取元素
+    const header = document.getElementById('header');
+    const currentSolution = document.getElementById('currentSolution');
+    const nextSolution = document.getElementById('nextSolution');
+    const scrollHint = document.getElementById('scrollHint');
+    const scrollProgress = document.getElementById('scrollProgress');
+
+    // 滚动处理函数
+    let nextSolutionTimeout = null;
+    
+    function handleScroll() {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.body.scrollHeight;
+      const scrollPercent = Math.min(scrollY / (documentHeight - windowHeight), 1);
+
+      // 更新进度条
+      scrollProgress.style.width = `${scrollPercent * 100}%`;
+
+      // 标题动画
+      if (scrollY > 100) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+
+      // 方案切换动画 - 延迟显示下一步方案
+      if (scrollY > 300) {
+        // 隐藏当前方案
+        currentSolution.classList.add('hidden');
+        scrollHint.classList.add('hidden');
+        
+        // 延迟1秒显示下一步方案
+        if (!nextSolutionTimeout && !nextSolution.classList.contains('visible')) {
+          nextSolutionTimeout = setTimeout(() => {
+            nextSolution.classList.add('visible');
+            nextSolutionTimeout = null;
+          }, 1000);
+        }
+      } else {
+        // 滚动回顶部，重置状态
+        currentSolution.classList.remove('hidden');
+        nextSolution.classList.remove('visible');
+        scrollHint.classList.remove('hidden');
+        
+        // 清除延迟定时器
+        if (nextSolutionTimeout) {
+          clearTimeout(nextSolutionTimeout);
+          nextSolutionTimeout = null;
+        }
+      }
+    }
+
+    // 节流滚动监听
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // 初始化
+    handleScroll();
+
+    // 触摸支持（移动端）
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartY = e.touches[0].clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchY;
+      
+      if (Math.abs(deltaY) > 50) {
+        if (deltaY > 0 && !nextSolution.classList.contains('visible')) {
+          // 向上滑动 - 显示下一步
+          window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+        } else if (deltaY < 0 && nextSolution.classList.contains('visible')) {
+          // 向下滑动 - 显示当前
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+    });
+
+    // 键盘支持
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' && !nextSolution.classList.contains('visible')) {
+        window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+      } else if (e.key === 'ArrowUp' && nextSolution.classList.contains('visible')) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
+  </script>
+</body>
+</html>
